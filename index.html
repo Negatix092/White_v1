@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Evitar scroll */
+        }
+        body {
+            background-color: white;
+            color: black;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            margin: 0;
+            background-color: white;
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+        @media (max-width: 768px) {
+            canvas {
+                width: 90vw;
+                height: 90vh;
+            }
+        }
+    </style>    
+</head>
+
+<body>
+    <canvas id="sunflowerCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('sunflowerCanvas');
+        const ctx = canvas.getContext('2d');
+        const numPoints = 250;
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+        const transitionRadius = 7;
+        let currentPoint = 0;
+        let frameCount = 0;
+        const message = "Disfruta de tu día especial";
+        let messageIndex = 0;
+        const messageY = 100;
+        const messageSpeed = 10;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function draw() {
+            if (currentPoint > numPoints) {
+                drawDownloadLink(); // Dibujar el enlace de descarga al final de la animación
+                drawCurvedStem(); // Dibujar el tallo curvado
+                return;
+            }
+
+            const r = Math.sqrt(currentPoint);
+            const theta = goldenAngle * currentPoint;
+            const x = canvas.width / 2 + r * Math.cos(theta) * 10;
+            const y = canvas.height / 2 + r * Math.sin(theta) * 10;
+
+            if (r < transitionRadius) {
+                ctx.fillStyle = 'brown';
+            } else {
+                ctx.fillStyle = 'goldenrod';
+            }
+
+            // Dibujar polígono como punto
+            drawPolygon(x, y, 5, 6);
+
+            if (frameCount % messageSpeed === 0) {
+                drawMessage();
+            }
+
+            currentPoint += 1;
+            frameCount++;
+            requestAnimationFrame(draw);
+        }
+
+        function drawPolygon(x, y, radius, sides) {
+            const angleStep = (Math.PI * 2) / sides;
+            ctx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const angle = angleStep * i;
+                const xOffset = x + radius * Math.cos(angle);
+                const yOffset = y + radius * Math.sin(angle);
+                if (i === 0) {
+                    ctx.moveTo(xOffset, yOffset);
+                } else {
+                    ctx.lineTo(xOffset, yOffset);
+                }
+            }
+            ctx.fill();
+        }
+
+        function drawMessage() {
+            if (messageIndex < message.length) {
+                // Limpiar el área donde se dibuja el mensaje para evitar sobreescribir
+                ctx.clearRect(0, 0, canvas.width, 150);
+                
+                // Dibujar el mensaje hasta el índice actual
+                ctx.fillStyle = 'white';
+                ctx.font = '30px "Dancing Script", cursive';
+                ctx.textAlign = "center";
+                ctx.fillText(message.slice(0, messageIndex + 1), canvas.width / 2, messageY);
+                messageIndex = messageIndex + 1;
+            }
+        }
+        
+
+        function drawCurvedStem() {
+            const stemStartX = canvas.width / 2;
+            const stemStartY = canvas.height / 2 + 100;  // Starting point (below the flower)
+            const stemEndX = canvas.width / 2;
+            const stemEndY = canvas.height - 80;  // End point (near the bottom)
+
+            ctx.beginPath();
+
+            // Create a simple Bezier curve for the stem
+            ctx.moveTo(stemStartX, stemStartY);
+            ctx.bezierCurveTo(
+            stemStartX - 50, stemStartY + 150,  // Control point 1
+            stemEndX + 50, stemEndY - 150,  // Control point 2
+            stemEndX, stemEndY  // End point
+            );
+
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 5;
+            //not a solid line, but hexagons
+            ctx.setLineDash([5, 15]);
+            ctx.stroke();
+        }
+
+        function drawDownloadLink() {
+
+            //drawCurvedStem();
+
+            // Dibujar el texto "Descargar tu regalo aquí"
+            ctx.fillStyle = 'white';
+            ctx.font = '20px "Dancing Script", cursive';
+            ctx.textAlign = "center";
+            const fullText = "Encuentra tu regalo";
+            //const linkText = "aquí";
+
+            // Dibujar el texto normal
+            ctx.fillText(fullText, canvas.width / 2 - 40, canvas.height - 50);
+
+            // Subrayar y dibujar la palabra "aquí"
+            ctx.fillStyle = 'yellow';
+            ctx.fillText("aquí", canvas.width / 2 + 50, canvas.height - 50);
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 + 30, canvas.height - 45);
+            ctx.lineTo(canvas.width / 2 + 70, canvas.height - 45);
+            ctx.strokeStyle = 'yellow';
+            ctx.stroke();
+
+            // Hacer clic en el enlace dentro del canvas
+            canvas.addEventListener('mousemove', function (event) {
+                const x = event.clientX;
+                const y = event.clientY;
+
+                // Verificar si el clic está cerca de la palabra "aquí"
+                if (
+                    x > canvas.width / 2 + 30 &&
+                    x < canvas.width / 2 + 70 &&
+                    y > canvas.height - 70 &&
+                    y < canvas.height - 30
+                ) {
+                    canvas.style.cursor = 'pointer';
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+            });
+
+            // Hacer clic en el enlace dentro del canvas
+            canvas.addEventListener('click', function (event) {
+                const x = event.clientX;
+                const y = event.clientY;
+
+                // Verificar si el clic está cerca de la palabra "aquí"
+                if (
+                    x > canvas.width / 2 + 30 &&
+                    x < canvas.width / 2 + 70 &&
+                    y > canvas.height - 70 &&
+                    y < canvas.height - 30
+                ) {
+                    // Abrir el PDF en una nueva pestaña
+                    window.open('El_cumpleaños_de_la_infanta.pdf', '_blank');
+                }
+            });
+        }
+
+        draw();
+    </script>
+</body>
+
+</html>
