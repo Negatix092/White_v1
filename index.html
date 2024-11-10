@@ -71,7 +71,7 @@
             const y = canvas.height / 2 + r * Math.sin(theta) * 10;
 
             if (r < transitionRadius) {
-                ctx.fillStyle = 'brown';
+                ctx.fillStyle = 'black';
             } else {
                 ctx.fillStyle = 'goldenrod';
             }
@@ -110,7 +110,7 @@
                 ctx.clearRect(0, 0, canvas.width, 150);
                 
                 // Dibujar el mensaje hasta el índice actual
-                ctx.fillStyle = 'white';
+                ctx.fillStyle = 'black';
                 ctx.font = '30px "Dancing Script", cursive';
                 ctx.textAlign = "center";
                 ctx.fillText(message.slice(0, messageIndex + 1), canvas.width / 2, messageY);
@@ -147,7 +147,7 @@
             //drawCurvedStem();
 
             // Dibujar el texto "Descargar tu regalo aquí"
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = 'black';
             ctx.font = '20px "Dancing Script", cursive';
             ctx.textAlign = "center";
             const fullText = "Encuentra tu regalo";
@@ -157,12 +157,12 @@
             ctx.fillText(fullText, canvas.width / 2 - 40, canvas.height - 50);
 
             // Subrayar y dibujar la palabra "aquí"
-            ctx.fillStyle = 'yellow';
+            ctx.fillStyle = 'blue';
             ctx.fillText("aquí", canvas.width / 2 + 50, canvas.height - 50);
             ctx.beginPath();
             ctx.moveTo(canvas.width / 2 + 30, canvas.height - 45);
             ctx.lineTo(canvas.width / 2 + 70, canvas.height - 45);
-            ctx.strokeStyle = 'yellow';
+            ctx.strokeStyle = 'blue';
             ctx.stroke();
 
             // Hacer clic en el enlace dentro del canvas
